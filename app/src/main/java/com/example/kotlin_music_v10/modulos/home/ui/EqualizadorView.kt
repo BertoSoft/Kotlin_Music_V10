@@ -14,23 +14,17 @@ class EqualizadorView @JvmOverloads constructor(
     defEstiloAtributo: Int = 0
 ) : View(miContexto, atributo, defEstiloAtributo) {
 
-    // Numero de barras
+    // 1.- Definimos las variables
     private val numeroBarras = 32
-
-    // pincel
     private val pincel: Paint = Paint().apply {
         color = Color.parseColor("#1DB954") // Color verde estilo moderno / Spotify
         style = Paint.Style.FILL
         isAntiAlias = true // Suaviza los bordes para evitar dientes de sierra
     }
-
-    // ALtura de las barras entre 0.0f y 1.0f
     private val alturaBarras = FloatArray(numeroBarras);
-
-    // Radio para redondear las esquinas superiores
     private val radioBarras = 12.0f
 
-    //2.- funcion que recibe los datos
+    //2.- Funcion que recibe los datos
     fun actualizarEspectro(datosFFT: ByteArray?) {
         if (datosFFT == null || datosFFT.isEmpty()) return
 
