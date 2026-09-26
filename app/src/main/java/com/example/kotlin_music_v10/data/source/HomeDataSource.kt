@@ -21,23 +21,14 @@ class HomeDataSource @Inject constructor(
         val camposCancion = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.AUTHOR,
+            MediaStore.Audio.Media.ARTIST,   // 👈 CORRECCIÓN: Cambiado AUTHOR por ARTIST
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DATA
             )
 
-        // 3. SOLUCIÓN: Unificamos el filtro usando DATA con comodines '%'.
-        // Esto buscará la palabra de la carpeta en cualquier parte de la ruta del archivo.
-        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0 AND (" +
-                "${MediaStore.Audio.Media.DATA} LIKE ? OR " +
-                "${MediaStore.Audio.Media.DATA} LIKE ?)"
-
-        // Argumentos que se inyectan de forma segura en las condiciones '?' de la selección
-        val selectionArgs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            arrayOf("%Music%", "%Download%")
-        } else {
-            arrayOf("%/Music/%", "%/Download/%")
-        }
+        // 3. Traemos toda la música indexada para evitar bloqueos del sistema
+        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
+        val selectionArgs = null
 
         // 4.- Ordenamos por el titulo
         val orden = "${MediaStore.Audio.Media.TITLE} ASC"
