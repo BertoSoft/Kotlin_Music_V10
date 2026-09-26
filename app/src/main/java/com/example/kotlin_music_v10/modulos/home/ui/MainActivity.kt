@@ -1,4 +1,4 @@
-package com.example.kotlin_music_v10.home.ui
+package com.example.kotlin_music_v10.modulos.home.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

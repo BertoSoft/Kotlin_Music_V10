@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".home.ui.MainActivity">
+    tools:context=".modulos.home.ui.MainActivity">
 
     <!-- 1. BLOQUE SUPERIOR (1/3 de la pantalla): Analizador y datos básicos -->
-    <com.tu.paquete.presentation.view.SpectrumVisualizerView
+    <com.example.kotlin_music_v10.modulos.home.ui.EqualizadorView
         android:id="@+id/spectrumVisualizer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtSongTitle"
+        android:id="@+id/txtCancion"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -36,7 +36,7 @@
 
     <!-- 2. BLOQUE CENTRAL (Aproximadamente 2/3 de la pantalla): El listado de canciones -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvSongList"
+        android:id="@+id/rvCanciones"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
@@ -44,8 +44,8 @@
         app:layout_constraintBottom_toTopOf="@id/seekBarProgress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtSongTitle"
-        tools:listitem="@layout/item_song" />
+        app:layout_constraintTop_toBottomOf="@id/txtCancion"
+        tools:listitem="@layout/item_cancion" />
 
     <!-- 3. BLOQUE INFERIOR: Barra de tiempo y mandos multimedia -->
     <SeekBar
@@ -53,31 +53,31 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@id/btnPlayPause"
+        app:layout_constraintBottom_toTopOf="@id/btnPlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/txtCurrentTime"
+        android:id="@+id/txtProgreso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00"
-        android:textSize="11sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@id/seekBarProgress"
         app:layout_constraintTop_toBottomOf="@id/seekBarProgress" />
 
     <TextView
-        android:id="@+id/txtTotalTime"
+        android:id="@+id/txtDuracion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="03:45"
-        android:textSize="11sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@id/seekBarProgress"
         app:layout_constraintTop_toBottomOf="@id/seekBarProgress" />
 
     <!-- Mandos de control alineados abajo del todo -->
     <ImageButton
-        android:id="@+id/btnPlayPause"
+        android:id="@+id/btnPlay"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginBottom="8dp"
@@ -90,27 +90,27 @@
         tools:srcCompat="@android:drawable/ic_media_play" />
 
     <ImageButton
-        android:id="@+id/btnPrevious"
+        android:id="@+id/btnAtras"
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_marginEnd="32dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Atrás"
-        app:layout_constraintBottom_toBottomOf="@id/btnPlayPause"
-        app:layout_constraintEnd_toStartOf="@id/btnPlayPause"
-        app:layout_constraintTop_toTopOf="@id/btnPlayPause"
+        app:layout_constraintBottom_toBottomOf="@id/btnPlay"
+        app:layout_constraintEnd_toStartOf="@id/btnPlay"
+        app:layout_constraintTop_toTopOf="@id/btnPlay"
         tools:srcCompat="@android:drawable/ic_media_previous" />
 
     <ImageButton
-        android:id="@+id/btnNext"
+        android:id="@+id/btnAdelante"
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_marginStart="32dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Adelante"
-        app:layout_constraintBottom_toBottomOf="@id/btnPlayPause"
-        app:layout_constraintStart_toEndOf="@id/btnPlayPause"
-        app:layout_constraintTop_toTopOf="@id/btnPlayPause"
+        app:layout_constraintBottom_toBottomOf="@id/btnPlay"
+        app:layout_constraintStart_toEndOf="@id/btnPlay"
+        app:layout_constraintTop_toTopOf="@id/btnPlay"
         tools:srcCompat="@android:drawable/ic_media_next" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
