@@ -4,8 +4,7 @@ import android.net.Uri
 
 data class DatosCancion(
     val id: Long,
-    val titulo: String,
-    val artista: String,
+    val nombre: String,
     val duracion: Long,
     val ruta: String
 )

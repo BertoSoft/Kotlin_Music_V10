@@ -66,6 +66,14 @@ class HomeViewModel@Inject constructor(
         getListaCanciones();
     }
 
+    fun itemClick(cancion: DatosCancion){
+        _estado.update { estado ->
+            estado.copy(
+                cancionActual = cancion
+            )
+        }
+    }
+
     // Funciones con curoutinas
     fun getListaCanciones(){
         viewModelScope.launch {
@@ -102,5 +110,6 @@ class HomeViewModel@Inject constructor(
             }
         }
     }
+
 
 }

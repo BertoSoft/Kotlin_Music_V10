@@ -1,50 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="14dp">
+    android:layout_margin="4dp"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/back_color_item">
 
-<LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/txtTrackTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre de la Canción"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:maxLines="1"
-        android:ellipsize="end"/>
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
 
-    <TextView
-        android:id="@+id/txtTrackArtist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Artista"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="13sp"
-        android:maxLines="1"
-        android:ellipsize="end"/>
-</LinearLayout>
+        <!-- Visual Anchor: Icono musical a la izquierda con color destacado -->
+        <ImageView
+            android:id="@+id/imgPlay"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:background="?attr/colorPrimary"
+            android:backgroundTint="#1F000000"
+            android:src="@android:drawable/ic_media_play"
+            app:tint="?attr/colorPrimary"
+            android:importantForAccessibility="no" />
 
-<TextView
-android:id="@+id/txtTrackDuration"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_marginStart="8dp"
-android:text="00:00"
-android:textColor="?android:attr/textColorSecondary"
-android:textSize="13sp" />
+        <!-- Título de la canción -->
+        <TextView
+            android:id="@+id/txtCancion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="14dp"
+            android:text="Nombre de la Canción"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- Duración fija a la derecha -->
+        <TextView
+            android:id="@+id/txtDuracion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="00:00"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp" />
 
     </LinearLayout>
+</androidx.cardview.widget.CardView>

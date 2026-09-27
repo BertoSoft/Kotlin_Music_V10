@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backcolor_app"
     android:padding="16dp"
     tools:context=".modulos.home.ui.MainActivity">
 
@@ -34,18 +35,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spectrumVisualizer" />
 
-    <!-- 2. BLOQUE CENTRAL (Aproximadamente 2/3 de la pantalla): El listado de canciones -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCanciones"
+    <!-- 2. BLOQUE CENTRAL: El listado envuelto en un CardView con esquinas redondeadas -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardContenedorLista"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="36dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/backcolor_app"
         app:layout_constraintBottom_toTopOf="@id/seekBarProgress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtCancion"
-        tools:listitem="@layout/item_cancion" />
+        app:layout_constraintTop_toBottomOf="@id/txtCancion">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCanciones"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp"
+            android:clipToPadding="false"
+            tools:listitem="@layout/item_main" />
+
+    </androidx.cardview.widget.CardView>
 
     <!-- 3. BLOQUE INFERIOR: Barra de tiempo y mandos multimedia -->
     <SeekBar
@@ -53,6 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
+        android:foreground="@color/primario"
         app:layout_constraintBottom_toTopOf="@id/btnPlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -63,6 +77,7 @@
         android:layout_height="wrap_content"
         android:text="00:00"
         android:textSize="14sp"
+        android:textColor="@color/secundario"
         app:layout_constraintStart_toStartOf="@id/seekBarProgress"
         app:layout_constraintTop_toBottomOf="@id/seekBarProgress" />
 
@@ -72,23 +87,12 @@
         android:layout_height="wrap_content"
         android:text="03:45"
         android:textSize="14sp"
+        android:textColor="@color/secundario"
         app:layout_constraintEnd_toEndOf="@id/seekBarProgress"
         app:layout_constraintTop_toBottomOf="@id/seekBarProgress" />
 
-    <!-- Mandos de control alineados abajo del todo -->
-    <ImageButton
-        android:id="@+id/btnPlay"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginBottom="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Play o Pause"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:srcCompat="@android:drawable/ic_media_play" />
-
+    <!-- Mandos de control estilizados con color -->
+    <!-- Botón de Atrás -->
     <ImageButton
         android:id="@+id/btnAtras"
         android:layout_width="44dp"
@@ -96,11 +100,29 @@
         android:layout_marginEnd="32dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Atrás"
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/ic_media_previous"
+        app:tint="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="@id/btnPlay"
         app:layout_constraintEnd_toStartOf="@id/btnPlay"
-        app:layout_constraintTop_toTopOf="@id/btnPlay"
-        tools:srcCompat="@android:drawable/ic_media_previous" />
+        app:layout_constraintTop_toTopOf="@id/btnPlay" />
 
+    <!-- Botón de Play Central -->
+    <ImageButton
+        android:id="@+id/btnPlay"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="?attr/colorPrimary"        android:elevation="4dp"
+        android:contentDescription="Play o Pause"
+        android:scaleType="centerInside"
+        android:src="@android:drawable/ic_media_play"
+        app:tint="?android:attr/colorBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Botón de Adelante -->
     <ImageButton
         android:id="@+id/btnAdelante"
         android:layout_width="44dp"
@@ -108,9 +130,11 @@
         android:layout_marginStart="32dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Adelante"
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/ic_media_next"
+        app:tint="?attr/colorPrimary"
         app:layout_constraintBottom_toBottomOf="@id/btnPlay"
         app:layout_constraintStart_toEndOf="@id/btnPlay"
-        app:layout_constraintTop_toTopOf="@id/btnPlay"
-        tools:srcCompat="@android:drawable/ic_media_next" />
+        app:layout_constraintTop_toTopOf="@id/btnPlay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

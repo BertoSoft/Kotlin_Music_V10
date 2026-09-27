@@ -10,7 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlin_music_v10.databinding.ActivityMainBinding
+import com.example.kotlin_music_v10.domain.model.DatosCancion
+import com.example.kotlin_music_v10.modulos.home.ui.adapter.HomeAdapter
+import com.example.kotlin_music_v10.modulos.home.viewmodel.EstadoPlayer
 import com.example.kotlin_music_v10.modulos.home.viewmodel.HomeUiEstado
 import com.example.kotlin_music_v10.modulos.home.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: HomeViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
+    private  val miAdaptador by lazy { HomeAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +38,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun initUi() {
         verificarYPedirPermisos()
+        initRv()
         initObservers()
+    }
+
+    private fun initRv() {
+        with(binding.rvCanciones){
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = miAdaptador
+            setHasFixedSize(true)
+        }
+
+        miAdaptador.onCancionClick = { cancion ->
+                viewModel.itemClick(cancion)
+            }
+
     }
 
     private fun initObservers() {
@@ -46,11 +66,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dibujaUi(estado: HomeUiEstado) {
+        with(binding){
 
+            // Nombre Cancion
+            if(estado.cancionActual != null){
+                txtCancion.text = estado.cancionActual.nombre
+            }
 
+            //RecyclerView
+            miAdaptador.submitList(estado.listaCanciones)
+
+            //Boton Play
+            if(estado.estadoPlayer == EstadoPlayer.Play){
+                btnPlay.setImageResource(android.R.drawable.ic_media_pause)
+            }
+            else if(estado.estadoPlayer == EstadoPlayer.Pause ||
+                estado.estadoPlayer == EstadoPlayer.Stop){
+                btnPlay.setImageResource(android.R.drawable.ic_media_play)
+            }
+        }
     }
 
-    // 1. El lanzador ahora solo gestiona el permiso nativo moderno de audio
     private val solicitarPermisosAudio = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { concedido ->

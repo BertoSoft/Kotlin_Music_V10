@@ -5,6 +5,7 @@ import android.os.Build
 import android.provider.MediaStore
 import com.example.kotlin_music_v10.domain.model.DatosCancion
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.processor.internal.definecomponent.codegen._dagger_hilt_android_internal_builders_ServiceComponentBuilder
 import javax.inject.Inject
 
 class HomeDataSource @Inject constructor(
@@ -14,56 +15,73 @@ class HomeDataSource @Inject constructor(
     suspend fun getAllCanciones(): List<DatosCancion>?{
         val listaCanciones = mutableListOf<DatosCancion>()
 
-        // 1. Apuntamos a la base de datos de audio externa de Android
-        val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        // 1.- Apuntamos a todos los archivos del almacenamiento externo
+        val uri = MediaStore.Files.getContentUri("external")
 
-        // 2.- Campos para leer de las canciones
-        val camposCancion = arrayOf(
-            MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.ARTIST,   // 👈 CORRECCIÓN: Cambiado AUTHOR por ARTIST
-            MediaStore.Audio.Media.DURATION,
-            MediaStore.Audio.Media.DATA
-            )
+        // 2.- Campos que necesitamos
+        val campos = arrayOf(
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.DATA,
+            MediaStore.Files.FileColumns.DURATION,
+            MediaStore.Files.FileColumns.SIZE
+        )
 
-        // 3. Traemos toda la música indexada para evitar bloqueos del sistema
-        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
-        val selectionArgs = null
+        // 2.5 Definimos nuestros límites de filtrado
+        // Ejemplo: Más de 30 segundos (30,000 ms) y más de 1 MB (1,048,576 bytes)
+        val duracionMinimaMs = 30000
+        val tamanoMinimoBytes = 1024 * 1024
 
-        // 4.- Ordenamos por el titulo
-        val orden = "${MediaStore.Audio.Media.TITLE} ASC"
+        // 3. Modificamos el filtro (selection)
+        // Agrupamos las rutas con paréntesis para que el operador AND afecte a ambas carpetas por igual
+        val seleccion = "(" +
+                "${MediaStore.Files.FileColumns.DATA} LIKE ? OR " +
+                "${MediaStore.Files.FileColumns.DATA} LIKE ?" +
+                ") AND ${MediaStore.Files.FileColumns.DURATION} >= ? " +
+                "AND ${MediaStore.Files.FileColumns.SIZE} >= ?"
+
+        // 4. Pasamos los argumentos en el mismo orden que los signos de interrogación '?'
+        val seleccionArgumentos = arrayOf(
+            "%/Download/%.mp3",
+            "%/Music/%.mp3",
+            duracionMinimaMs.toString(),
+            tamanoMinimoBytes.toString()
+        )
+
+        // 4. Ordenamos alfabéticamente por el nombre del archivo
+        val orden = "${MediaStore.Files.FileColumns.DISPLAY_NAME} ASC"
 
         try {
             contextoApp.contentResolver.query(
                 uri,
-                camposCancion,
-                selection,
-                selectionArgs,
+                campos,
+                seleccion,
+                seleccionArgumentos,
                 orden
             )?.use{ cursor ->
-                val idCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-                val tituloCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
-                val artistaCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
-                val duracionCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
-                val dataCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+                val idCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
+                val nombreCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
+                val rutaCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+                val duracionCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DURATION)
 
-                // 5. Iteramos por cada fila encontrada en las carpetas
                 while (cursor.moveToNext()){
                     val id = cursor.getLong(idCol)
-                    val titulo = cursor.getString(tituloCol) ?: "Título Desconocido"
-                    val artista = cursor.getString(artistaCol) ?: "Artista Desconocido"
-                    val duracion = cursor.getLong(duracionCol) ?: 0L
-                    val rutaFisica = cursor.getString(dataCol) ?: ""
+                    val nombreSufijo = cursor.getString(nombreCol)
+                    val ruta = cursor.getString(rutaCol)
+                    val duracion = cursor.getLong(duracionCol)
 
-                    // Mapeamos al datos de dominio
+                    val nombre = nombreSufijo.substringBeforeLast(".")
+                    // Aqui iria duracion em minitos:segundos
+
+
+                    android.util.Log.d("MUSICA_TEST", "Encontrado en MediaStore: $nombre en ruta: $ruta")
+
                     listaCanciones.add(DatosCancion(
                         id = id,
-                        titulo = titulo,
-                        artista = artista,
+                        nombre = nombre,
                         duracion = duracion,
-                        ruta = rutaFisica
-                    )
-                    )
+                        ruta = ruta
+                    ))
                 }
             }
             return listaCanciones
@@ -71,6 +89,5 @@ class HomeDataSource @Inject constructor(
         catch (e: Exception){
             return null
         }
-
-    };
+    }
 }

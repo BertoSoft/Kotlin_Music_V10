@@ -2,4 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="backcolor_app">#3852E5</color>
+    <color name="back_color_rv">#94EFFB</color>
+    <color name="back_color_item">#697DEF</color>
+
+    <color name="primario">#D9613C</color>
+    <color name="secundario">#35E63C</color>
+
+
 </resources>
