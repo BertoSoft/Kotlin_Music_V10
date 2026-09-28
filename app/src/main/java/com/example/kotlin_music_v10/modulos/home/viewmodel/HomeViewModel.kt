@@ -17,10 +17,8 @@ enum class EstadoPlayer {Stop, Play, Pause}
 data class HomeUiEstado(
     val listaCanciones: List<DatosCancion>? = null,
     val cancionActual: DatosCancion? = null,
-    val progreso: Long = 0L,
     val proximaCancion: DatosCancion? = null,
     val estadoPlayer: EstadoPlayer = EstadoPlayer.Stop,
-    val datosFFT: ByteArray? = null,
     val isCargando: Boolean = false,
     val msgError: String? = null
 ) {
@@ -34,9 +32,7 @@ data class HomeUiEstado(
         if (listaCanciones != other.listaCanciones) return false
         if (cancionActual != other.cancionActual) return false
         if (proximaCancion != other.proximaCancion) return false
-        if (progreso != other.progreso) return false
         if (estadoPlayer != other.estadoPlayer) return false
-        if (!datosFFT.contentEquals(other.datosFFT)) return false
         // Se agregaron los nuevos campos al equals
         if (isCargando != other.isCargando) return false
         if (msgError != other.msgError) return false
@@ -47,9 +43,7 @@ data class HomeUiEstado(
         var result = listaCanciones?.hashCode() ?: 0
         result = 31 * result + (cancionActual?.hashCode() ?: 0)
         result = 31 * result + (proximaCancion?.hashCode() ?: 0)
-        result = 31 * result + progreso.hashCode()
         result = 31 * result + estadoPlayer.hashCode()
-        result = 31 * result + (datosFFT?.contentHashCode() ?: 0)
         // Se agregaron los nuevos campos al hashCode
         result = 31 * result + isCargando.hashCode()
         result = 31 * result + (msgError?.hashCode() ?: 0)
@@ -119,8 +113,8 @@ class HomeViewModel@Inject constructor(
             _estado.update { estado ->
                 estado.copy(
                     cancionActual = getCancionFromId(idActual),
-                    progreso = 0L,
                     estadoPlayer = EstadoPlayer.Play
+
                 )
             }
         }
@@ -129,7 +123,6 @@ class HomeViewModel@Inject constructor(
             _estado.update { estado ->
                 estado.copy(
                     cancionActual = getCancionFromId(0),
-                    progreso = 0L,
                     estadoPlayer = EstadoPlayer.Play
                 )
             }
@@ -149,7 +142,6 @@ class HomeViewModel@Inject constructor(
             _estado.update { estado ->
                 estado.copy(
                     cancionActual = getCancionFromId(ultima - 1),
-                    progreso = 0L,
                     estadoPlayer = EstadoPlayer.Play
                 )
             }
@@ -159,7 +151,6 @@ class HomeViewModel@Inject constructor(
             _estado.update { estado ->
                 estado.copy(
                     cancionActual = getCancionFromId(idActual),
-                    progreso = 0L,
                     estadoPlayer = EstadoPlayer.Play
                 )
             }
@@ -167,16 +158,7 @@ class HomeViewModel@Inject constructor(
     }
 
     fun getCancionFromId(id: Int): DatosCancion?{
-        val lista = _estado.value.listaCanciones
-
-        if(lista != null) {
-            for (cancion in lista) {
-                if (cancion.id == id) {
-                    return cancion
-                }
-            }
-        }
-        return null
+        return _estado.value.listaCanciones?.find { it.id == id }
     }
 
     // Funciones con curoutinas
@@ -215,14 +197,4 @@ class HomeViewModel@Inject constructor(
             }
         }
     }
-
-    fun refrescaProgreso(progreso: Long){
-        _estado.update { estado ->
-            estado.copy(
-                progreso = progreso
-            )
-        }
-    }
-
-
 }

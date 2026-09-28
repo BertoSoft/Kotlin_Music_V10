@@ -4,6 +4,7 @@
 
     <!-- Permiso obligatorio para Android 13 hasta Android 17 (API 33 a 37+) -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".App"
