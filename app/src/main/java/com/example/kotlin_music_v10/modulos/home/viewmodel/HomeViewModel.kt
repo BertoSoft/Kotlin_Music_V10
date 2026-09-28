@@ -17,6 +17,7 @@ enum class EstadoPlayer {Stop, Play, Pause}
 data class HomeUiEstado(
     val listaCanciones: List<DatosCancion>? = null,
     val cancionActual: DatosCancion? = null,
+    val progreso: Long = 0L,
     val proximaCancion: DatosCancion? = null,
     val estadoPlayer: EstadoPlayer = EstadoPlayer.Stop,
     val datosFFT: ByteArray? = null,
@@ -33,6 +34,7 @@ data class HomeUiEstado(
         if (listaCanciones != other.listaCanciones) return false
         if (cancionActual != other.cancionActual) return false
         if (proximaCancion != other.proximaCancion) return false
+        if (progreso != other.progreso) return false
         if (estadoPlayer != other.estadoPlayer) return false
         if (!datosFFT.contentEquals(other.datosFFT)) return false
         // Se agregaron los nuevos campos al equals
@@ -45,6 +47,7 @@ data class HomeUiEstado(
         var result = listaCanciones?.hashCode() ?: 0
         result = 31 * result + (cancionActual?.hashCode() ?: 0)
         result = 31 * result + (proximaCancion?.hashCode() ?: 0)
+        result = 31 * result + progreso.hashCode()
         result = 31 * result + estadoPlayer.hashCode()
         result = 31 * result + (datosFFT?.contentHashCode() ?: 0)
         // Se agregaron los nuevos campos al hashCode
@@ -69,9 +72,111 @@ class HomeViewModel@Inject constructor(
     fun itemClick(cancion: DatosCancion){
         _estado.update { estado ->
             estado.copy(
-                cancionActual = cancion
+                cancionActual = cancion,
+                estadoPlayer = EstadoPlayer.Play
             )
         }
+    }
+
+    fun cancionTerminada(){
+        val tamanoLista = _estado.value.listaCanciones?.count() ?: 0
+        if(tamanoLista > 1){
+            btnAdelanteClick()
+        }
+        else{
+            _estado.update { estado ->
+                estado.copy(
+                    estadoPlayer = EstadoPlayer.Stop
+                )
+            }
+        }
+
+    }
+
+    fun btnPlayClick(){
+        _estado.update { estado ->
+            if(estado.cancionActual == null) return@update estado
+
+            val nuevoEstadoPlayer = if(estado.estadoPlayer == EstadoPlayer.Play){
+                EstadoPlayer.Pause
+            }
+            else{
+                EstadoPlayer.Play
+            }
+            estado.copy(estadoPlayer = nuevoEstadoPlayer)
+        }
+    }
+
+    fun btnAdelanteClick(){
+        val tamanoLista = _estado.value.listaCanciones?.count() ?: 0
+        var idActual = _estado.value.cancionActual?.id ?: -1
+
+        if(idActual < 0 || _estado.value.listaCanciones == null) return
+
+        idActual++
+        if(idActual < tamanoLista){
+            // saltamos una cancion
+            _estado.update { estado ->
+                estado.copy(
+                    cancionActual = getCancionFromId(idActual),
+                    progreso = 0L,
+                    estadoPlayer = EstadoPlayer.Play
+                )
+            }
+        }
+        else{
+            // volvemos a la primera
+            _estado.update { estado ->
+                estado.copy(
+                    cancionActual = getCancionFromId(0),
+                    progreso = 0L,
+                    estadoPlayer = EstadoPlayer.Play
+                )
+            }
+        }
+    }
+
+    fun btnAtrasClick(){
+        val tamanoLista = _estado.value.listaCanciones?.count() ?: 0
+        var idActual = _estado.value.cancionActual?.id ?: -1
+
+        if(idActual < 0 || _estado.value.listaCanciones == null) return
+
+        idActual--
+        if(idActual < 0){
+            // saltamos a la ultima
+            val ultima = _estado.value.listaCanciones?.count() ?: -1
+            _estado.update { estado ->
+                estado.copy(
+                    cancionActual = getCancionFromId(ultima - 1),
+                    progreso = 0L,
+                    estadoPlayer = EstadoPlayer.Play
+                )
+            }
+        }
+        else{
+            // saltamos una atras
+            _estado.update { estado ->
+                estado.copy(
+                    cancionActual = getCancionFromId(idActual),
+                    progreso = 0L,
+                    estadoPlayer = EstadoPlayer.Play
+                )
+            }
+        }
+    }
+
+    fun getCancionFromId(id: Int): DatosCancion?{
+        val lista = _estado.value.listaCanciones
+
+        if(lista != null) {
+            for (cancion in lista) {
+                if (cancion.id == id) {
+                    return cancion
+                }
+            }
+        }
+        return null
     }
 
     // Funciones con curoutinas
@@ -108,6 +213,14 @@ class HomeViewModel@Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun refrescaProgreso(progreso: Long){
+        _estado.update { estado ->
+            estado.copy(
+                progreso = progreso
+            )
         }
     }
 

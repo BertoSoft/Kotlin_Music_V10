@@ -14,13 +14,13 @@ class HomeDataSource @Inject constructor(
 
     suspend fun getAllCanciones(): List<DatosCancion>?{
         val listaCanciones = mutableListOf<DatosCancion>()
+        var id = 0;
 
         // 1.- Apuntamos a todos los archivos del almacenamiento externo
         val uri = MediaStore.Files.getContentUri("external")
 
         // 2.- Campos que necesitamos
         val campos = arrayOf(
-            MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.DISPLAY_NAME,
             MediaStore.Files.FileColumns.DATA,
             MediaStore.Files.FileColumns.DURATION,
@@ -59,13 +59,11 @@ class HomeDataSource @Inject constructor(
                 seleccionArgumentos,
                 orden
             )?.use{ cursor ->
-                val idCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
                 val nombreCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
                 val rutaCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
                 val duracionCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DURATION)
 
                 while (cursor.moveToNext()){
-                    val id = cursor.getLong(idCol)
                     val nombreSufijo = cursor.getString(nombreCol)
                     val ruta = cursor.getString(rutaCol)
                     val duracion = cursor.getLong(duracionCol)
@@ -82,6 +80,7 @@ class HomeDataSource @Inject constructor(
                         duracion = duracion,
                         ruta = ruta
                     ))
+                    id++;
                 }
             }
             return listaCanciones

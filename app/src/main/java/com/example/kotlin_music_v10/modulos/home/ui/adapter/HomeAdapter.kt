@@ -42,7 +42,7 @@ class HomeAdapter(
             val txt = cancion.duracion.toMinSeg()
             binding.txtDuracion.text = cancion.duracion.toMinSeg()
 
-            binding.imgPlay.setOnClickListener {
+            itemView.setOnClickListener {
                 onCancionClick?.invoke(cancion)
             }
         }
